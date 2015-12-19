@@ -10,64 +10,88 @@ function preload() {
 
 
 
-var players;
+//var players;
 var terrain;
-var nb_players = 5;
+var cursors;
 
 function create() {
 
 //Background sky
-game.add.sprite(0,0,'sky');
+//game.add.sprite(0,0,'sky');
+
 
 
 //Add physic to the game
 game.physics.startSystem(Phaser.Physics.ARCADE);
+game.stage.backgroundColor = '#2d2d2d';
 
 //On crée le groupe d'objet inerte
 terrain = game.add.group();
 //On active la physique sur le terrain
 terrain.enableBody= true;
-//On crée le sol
-var ground = terrain.create(0,game.world.height-64, 'ground');
-//Scale it to fit the size of the world
-ground.scale.setTo(2,2);
-//Makes it immobile
-ground.body.immovable = true;
 
 //On crée le groupe des joueurs
-players = game.add.physicsgroup(Phaser.Physics.ARCADE);
+players = game.add.group();
 
-//On active la physique sur les joueurs
-//players.physicsbodytype = Phaser.Physics.ARCADE;  
-game.physics.arcade.enable(players);
-//Set the physic properties.
-//players.body.bounce.y = 0.2;
-//players.body.gravity.y = 300;
-//players.body.collideWorldBounds = true;
+//On crée le joueur 1
+player1 = players.create(50,50,'dude');
+//player1 = game.add.sprite(50,50,'dude');
+//On fait suivre la camera sur le joueur
+game.camera.follow(player1);
+//On active et set la physique du joueur 1
+game.physics.arcade.enable(player1);
+player1.body.collideWorldBounds = true;
+player1.animations.add('left', [0, 1, 2, 3], 10, true);
+player1.animations.add('right', [5, 6, 7, 8], 10, true);
 
-
-
-for (var i=0;i<nb_players;i++)
-{
-    //On crée les joueurs
-    var player = players.create(0,32*i,'dude');
-    //player.name = 'player' + i;
-    //player.exists = false;
-    //player.visible = false;
-    //player.body.gravity.y.set(300);
-    //player.body.bounce.y = 0.2;
-    //player.body.collideWorldBounds = true;
-}
-//player1.body.gravity.y = 300;
-//players.setALL('body.gravity.y',300,false,false,0,true);
-
+//On crée le curseur
+cursors = game.input.keyboard.createCursorKeys();
 
 
 }
 
 function update() {
-    //  Collide the player and the stars with the terrain
-    game.physics.arcade.collide(players, terrain);
+
+
+var animation = 'none';
+
+//On fait l'animation du joueur*************************
+    //  Reset the players velocity (movement)
+    player1.body.velocity.x = 0;
+    player1.body.velocity.y = 0;
+
+    if (cursors.left.isDown)
+    {
+        //Move to the left
+        player1.body.velocity.x = -150;
+        animation = 'left';
+    }
+    if (cursors.right.isDown)
+    {
+        //Move to the right
+        player1.body.velocity.x = 150;
+        animation = 'right';
+    }
+    if (cursors.up.isDown)
+    {
+        //Move up
+        player1.body.velocity.y = -150;
+    }
+    if (cursors.down.isDown)
+    {
+        //Move down
+        player1.body.velocity.y = 150;
+    }
+
+    //Stand still or play the animation
+     if (animation == 'none')
+    {
+        player1.animations.stop()
+        player1.frame = 4;
+    } else {
+        player1.animations.play(animation);
+    }
+//**************************************************************
 }
 
 
