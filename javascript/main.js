@@ -163,6 +163,7 @@ function createmap() {
             map.putTile(2,i,HAUTEURJEUX-1);
         }
     }
+    //On met les ur de droite et de gauche
     for (i=0;i<HAUTEURJEUX;i++)
     {
         //droite
@@ -170,8 +171,22 @@ function createmap() {
         //Gauche
         map.putTile(2,LARGEURJEUX-1,i,layer1);
     }
-
     //**************************************************************************
+
+    //On fait un chemin, de l'entrée à la sortie. Àléatoire....
+    var curPos_x=entree_x; //Position actuel en x
+    var curPos_y=0; //position actuel en y
+    var chemin; //determine le bon chemin a prendre
+
+    //Si on est a l'entrée
+    if ((curPos_x == entree_x) && (curPos_y==0)) 
+    {
+        curPos_y=1;
+        chemin = game.rnd.between(1,3);
+        
+
+    }
+
     //On trouve une position aléatoire 
     var tile_x = game.rnd.between(1,LARGEURJEUX-1);
     var tile_y = game.rnd.between(1,HAUTEURJEUX-1);    
