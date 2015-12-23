@@ -23,6 +23,9 @@ var layer1;
 var entree_x;
 var sortie_x;
 
+//Tableaux?!
+var tableauMap;
+
 function create() {
 
 
@@ -116,6 +119,7 @@ function render() {
    //game.debug.text('Current Layer: ' + currentLayer.name, 50, 500);
    //game.debug.text('Position en x  ' + tile_x, 50, 500);
    //game.debug.text('Position en y ' + tile_y, 50, 550);
+   //game.debug.text('Valeur de la case 5 7 du tableau est ' + tableauMap[5][7], 50, 500);
     
 
 }
@@ -128,6 +132,18 @@ function createmap() {
 
     //  Creates a blank tilemap
     map = game.add.tilemap();
+
+    //On cree le tableau 2D qui représente la map
+    tableauMap = new Array();
+    for (var i=0;i<LARGEURJEUX;i++)
+        tableauMap[i] = new Array();
+    //On rempli le tableau de 0
+    for (i=0;i<LARGEURJEUX;i++)
+    {
+        for (var j=0;j<HAUTEURJEUX;j++)
+            tableauMap[i][j]=0;
+    }
+
 
     //  Add a Tileset image to the map
     map.addTilesetImage('ground_1x1');
@@ -142,35 +158,54 @@ function createmap() {
     //On set la grosseur du monde selon la layer1
     layer1.resizeWorld();
     //On fait ensorte que les tiles 0 à 24 du tilesetimage soit "dur" (collision) dans la layer 1.
-    map.setCollisionBetween(0, 24, true, layer1); 
+    map.setCollisionBetween(0, 3, true, layer1); 
 
     //*******On fait le contour de la map avec une entrée et une sortie************
 
     //On trouve la position d'entrée et de sortie du maze
     entree_x = game.rnd.between(1,LARGEURJEUX-2);
     sortie_x = game.rnd.between(1,LARGEURJEUX-2);
+    //Entre la position d'entrée et de sortie dans le tableau
+    tableauMap[entree_x][0]=3;
+    tableauMap[sortie_x][HAUTEURJEUX-1]=3;
+
+
     //On met le mur du top et bas
-    for (var i=0;i<LARGEURJEUX;i++)
+    for (i=0;i<LARGEURJEUX;i++)
     {
         //Top
         if (i != entree_x)
-        {
-            map.putTile(2,i,0,layer1);
-        }
+            tableauMap[i][0]=1;
+
         //Bas
         if (i != sortie_x)
-        {
-            map.putTile(2,i,HAUTEURJEUX-1);
-        }
+            tableauMap[i][HAUTEURJEUX-1]=1;
     }
-    //On met les ur de droite et de gauche
+    //On met les mur de droite et de gauche
     for (i=0;i<HAUTEURJEUX;i++)
     {
         //droite
-        map.putTile(2,0,i,layer1);
+        tableauMap[0][i]=1;
         //Gauche
-        map.putTile(2,LARGEURJEUX-1,i,layer1);
+        tableauMap[LARGEURJEUX-1][i]=1;
     }
+
+    //On parcourt le tableaux et on place les blocs à leurs place selon le numéro attribuer dans le tableau
+    for (i=0;i<LARGEURJEUX;i++)
+    {
+        for (var j=0;j<HAUTEURJEUX;j++)
+        {
+            if (tableauMap[i][j]==1)
+                map.putTile(2,i,j,layer1);
+
+            if (tableauMap[i][j]==3)
+                map.putTile(4,i,j,layer1);
+        }
+            
+    }
+
+
+
     //**************************************************************************
 
     //On fait un chemin, de l'entrée à la sortie. Àléatoire....
