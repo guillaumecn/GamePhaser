@@ -22,6 +22,9 @@ var map;
 var layer1;
 var entree_x;
 var sortie_x;
+var curPos_x; 
+var curPos_y;
+
 
 //Tableaux?!
 var tableauMap;
@@ -164,10 +167,10 @@ function createmap() {
 
     //On trouve la position d'entrée et de sortie du maze
     entree_x = game.rnd.between(1,LARGEURJEUX-2);
-    sortie_x = game.rnd.between(1,LARGEURJEUX-2);
+    //sortie_x = game.rnd.between(1,LARGEURJEUX-2);
     //Entre la position d'entrée et de sortie dans le tableau
     tableauMap[entree_x][0]=3;
-    tableauMap[sortie_x][HAUTEURJEUX-1]=4;
+    //tableauMap[sortie_x][HAUTEURJEUX-1]=4;
 
 
     //On met le mur du top et bas
@@ -178,8 +181,8 @@ function createmap() {
             tableauMap[i][0]=1;
 
         //Bas
-        if (i != sortie_x)
-            tableauMap[i][HAUTEURJEUX-1]=1;
+        //if (i != sortie_x)
+          //  tableauMap[i][HAUTEURJEUX-1]=1;
     }
     //On met les mur de droite et de gauche
     for (i=0;i<HAUTEURJEUX;i++)
@@ -195,18 +198,30 @@ function createmap() {
     //**************************************************************************
 
     //On fait un chemin, de l'entrée à la sortie. Àléatoire....
-    var curPos_x=entree_x; //Position actuel en x
-    var curPos_y=0; //position actuel en y
-    var chemin; //determine le bon chemin a prendre
+    curPos_x=entree_x; //Position actuel en x
+    curPos_y=0; //position actuel en y
 
     //Si on est a l'entrée
     if ((curPos_x == entree_x) && (curPos_y==0)) 
     {
         curPos_y=1;
-        var directionPossible = verifiePosition(curPos_x,curPos_y);
-        chemin = game.rnd.between(1,3);
-        
+        tableauMap[curPos_x][curPos_y]=3;
+    }
 
+    while (curPos_y != HAUTEURJEUX-1)
+    {
+        getPath();
+        //curPos_y = HAUTEURJEUX-1;
+        tableauMap[curPos_x][curPos_y]=3;
+    }
+    sortie_x = curPos_x;
+
+    //On met le mur du bas
+    for (i=0;i<LARGEURJEUX;i++)
+    {
+        //Bas
+        if (i != sortie_x)
+            tableauMap[i][HAUTEURJEUX-1]=1;
     }
 
     //On trouve une position aléatoire 
@@ -224,7 +239,7 @@ function createmap() {
             if (tableauMap[i][j]==1)
                 map.putTile(2,i,j,layer1);
 
-            if ((tableauMap[i][j]==3) || (tableauMap[i][j]==4))
+            if (tableauMap[i][j]==3)
                 map.putTile(4,i,j,layer1);
         }
             
@@ -232,23 +247,71 @@ function createmap() {
 }
 
 /*
-Fonction qui permet de vérifier l'entourage d'une position.
-Valeur retourné:
-si 0: Aucun chemin possible
-si 1: chemin possible devant
-si 2: chemin possible a gauche
-si 3: chemin possible a droite
-si 4: chemin possible devant et a gauche
-si 5: chemin possible devant et a droite
-si 6: chemin possible a gauche et a droite
-si 7: chemin possible les 3.
+
 */
-function verifiePosition(Position_x, Position_y) {
-    var directionPos;
+function getPath() 
+{
+    var goRight = 0;
+    var goLeft = 0;
+    var goFront = 0;
+    var goPath;
 
-    if (tableauMap[Position_x-1][Position_y]==1)
+    if (tableauMap[curPos_x-1][curPos_y]==0)
+        goLeft = 1;
+    if (tableauMap[curPos_x+1][curPos_y]==0)
+        goRight = 1;
+    if (tableauMap[curPos_x][curPos_y+1]==0)
+        goFront = 1;
 
+    switch (goFront+goRight+goLeft)
+    {
+        case 1:
+            curPos_x = curPos_x + goRight- goLeft;
+            curPos_y = curPos_y + goFront;
+        break;
 
+        case 2:
+            goPath = game.rnd.between(1,2);
+            if (goFront)
+            {
+                if ( goPath==1 )
+                    curPos_y = curPos_y + 1;
+                else
+                    curPos_x = curPos_x + goRight - goLeft;
+            }
+            else
+            {
+                if (goPath == 1)
+                    curPos_x = curPos_x + 1;
+                else
+                    curPos_x = curPos_x - 1;
+            }
 
-    return directionPos;
+        break;
+
+        case 3:
+            goPath = game.rnd.between(1,3);
+            switch (goPath)
+            {
+                case 1:
+                    curPos_y = curPos_y + 1;
+                break;
+
+                case 2:
+                    curPos_x = curPos_x + 1;
+                break;
+
+                case 3:
+                    curPos_x = curPos_x - 1;
+                break;
+
+                default:
+                    alert('Erreur!');
+            }
+        break;
+
+        default:
+            alert('Erreur!!');
+    }
+
 }
