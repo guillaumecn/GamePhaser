@@ -25,9 +25,6 @@ var sortie_x;
 var curPos_x; 
 var curPos_y;
 
-var gowhere;
-
-
 //Tableaux?!
 var tableauMap;
 
@@ -221,6 +218,8 @@ function createPath()
     {
         getPath();
         //curPos_y = HAUTEURJEUX-1;
+
+        //fixcorner();
         tableauMap[curPos_x][curPos_y]=3;
     }
     sortie_x = curPos_x;
@@ -257,7 +256,9 @@ function getPath()
     var goLeft = 0;
     var goFront = 0;
     var goPath;
+    var gowhere;
     
+
 
     if (tableauMap[curPos_x-1][curPos_y]==0)
     {
@@ -281,6 +282,7 @@ function getPath()
         case 1:
             curPos_x = curPos_x + goRight- goLeft;
             curPos_y = curPos_y + goFront;
+            possiblePath(gowhere);
         break;
 
         case 2:
@@ -291,15 +293,28 @@ function getPath()
                 {
                     curPos_y = curPos_y + 1; //va devant
                     gowhere = 'front';
+                    possiblePath(gowhere);
+                    if (goLeft)
+                        tableauMap[curPos_x-1][curPos_y-1]=3;
+                    else
+                        tableauMap[curPos_x+1][curPos_y-1]=3;
                 }
                     
                 else
                 {
                     curPos_x = curPos_x + goRight - goLeft; //va a gauche ou a droite
                     if (goLeft)
+                    {
                         gowhere = 'left';
+                        possiblePath(gowhere);
+                        tableauMap[curPos_x+1][curPos_y+1]=3;
+                    }                        
                     else
+                    {
                         gowhere = 'right';
+                        possiblePath(gowhere);
+                        tableauMap[curPos_x-1][curPos_y+1]=3;
+                    }       
                 }
                     
             }
@@ -309,12 +324,16 @@ function getPath()
                 {
                     curPos_x = curPos_x + 1; //va a droite
                     gowhere = 'right';
+                    possiblePath(gowhere);
+                    tableauMap[curPos_x-2][curPos_y]=3;
                 }
                     
                 else
                 {
                     curPos_x = curPos_x - 1; //va a gauche
                     gowhere = 'left';
+                    possiblePath(gowhere    );
+                    tableauMap[curPos_x+2][curPos_y]=3;
                 }                    
             }
 
@@ -349,6 +368,11 @@ function getPath()
     }
     
 
+}
+
+function possiblePath(gowhere)
+{
+
     if (gowhere == 'front')
     {
         if (tableauMap[curPos_x-1][curPos_y-1]==0)
@@ -375,6 +399,17 @@ function getPath()
             tableauMap[curPos_x+1][curPos_y+1]=1;
         if (tableauMap[curPos_x+1][curPos_y-1]==0)
             tableauMap[curPos_x+1][curPos_y-1]=1;
-    }
-    
+    } 
+}
+
+function fixcorner()
+{
+    if (tableauMap[curPos_x+1][curPos_y+1]==0)
+        tableauMap[curPos_x+1][curPos_y+1]=1;
+    if (tableauMap[curPos_x+1][curPos_y-1]==0)
+        tableauMap[curPos_x+1][curPos_y-1]=1;
+    if (tableauMap[curPos_x-1][curPos_y+1]==0)
+        tableauMap[curPos_x-1][curPos_y+1]=1;
+    if (tableauMap[curPos_x-1][curPos_y-1]==0)
+        tableauMap[curPos_x-1][curPos_y-1]=1;        
 }
