@@ -167,7 +167,7 @@ function createmap() {
     sortie_x = game.rnd.between(1,LARGEURJEUX-2);
     //Entre la position d'entrée et de sortie dans le tableau
     tableauMap[entree_x][0]=3;
-    tableauMap[sortie_x][HAUTEURJEUX-1]=3;
+    tableauMap[sortie_x][HAUTEURJEUX-1]=4;
 
 
     //On met le mur du top et bas
@@ -190,20 +190,6 @@ function createmap() {
         tableauMap[LARGEURJEUX-1][i]=1;
     }
 
-    //On parcourt le tableaux et on place les blocs à leurs place selon le numéro attribuer dans le tableau
-    for (i=0;i<LARGEURJEUX;i++)
-    {
-        for (var j=0;j<HAUTEURJEUX;j++)
-        {
-            if (tableauMap[i][j]==1)
-                map.putTile(2,i,j,layer1);
-
-            if (tableauMap[i][j]==3)
-                map.putTile(4,i,j,layer1);
-        }
-            
-    }
-
 
 
     //**************************************************************************
@@ -217,6 +203,7 @@ function createmap() {
     if ((curPos_x == entree_x) && (curPos_y==0)) 
     {
         curPos_y=1;
+        var directionPossible = verifiePosition(curPos_x,curPos_y);
         chemin = game.rnd.between(1,3);
         
 
@@ -229,4 +216,39 @@ function createmap() {
     //map.putTile(2,tile_x,tile_y, layer1);
 
 
+    //On parcourt le tableaux et on place les blocs à leurs place selon le numéro attribuer dans le tableau
+    for (i=0;i<LARGEURJEUX;i++)
+    {
+        for (var j=0;j<HAUTEURJEUX;j++)
+        {
+            if (tableauMap[i][j]==1)
+                map.putTile(2,i,j,layer1);
+
+            if ((tableauMap[i][j]==3) || (tableauMap[i][j]==4))
+                map.putTile(4,i,j,layer1);
+        }
+            
+    }
+}
+
+/*
+Fonction qui permet de vérifier l'entourage d'une position.
+Valeur retourné:
+si 0: Aucun chemin possible
+si 1: chemin possible devant
+si 2: chemin possible a gauche
+si 3: chemin possible a droite
+si 4: chemin possible devant et a gauche
+si 5: chemin possible devant et a droite
+si 6: chemin possible a gauche et a droite
+si 7: chemin possible les 3.
+*/
+function verifiePosition(Position_x, Position_y) {
+    var directionPos;
+
+    if (tableauMap[Position_x-1][Position_y]==1)
+
+
+
+    return directionPos;
 }
