@@ -25,6 +25,8 @@ var sortie_x;
 var curPos_x; 
 var curPos_y;
 
+var gowhere;
+
 
 //Tableaux?!
 var tableauMap;
@@ -122,7 +124,7 @@ function render() {
    //game.debug.text('Current Layer: ' + currentLayer.name, 50, 500);
    //game.debug.text('Position en x  ' + tile_x, 50, 500);
    //game.debug.text('Position en y ' + tile_y, 50, 550);
-   //game.debug.text('Valeur de la case 5 7 du tableau est ' + tableauMap[5][7], 50, 500);
+   //game.debug.text('go where dit: ' + gowhere, 50, 500);
     
 
 }
@@ -224,12 +226,6 @@ function createmap() {
             tableauMap[i][HAUTEURJEUX-1]=1;
     }
 
-    //On trouve une position aléatoire 
-    var tile_x = game.rnd.between(1,LARGEURJEUX-1);
-    var tile_y = game.rnd.between(1,HAUTEURJEUX-1);    
-    //On met une tile (la tile 3 du set) à la case trouver(en x et y) sur la map, sur la layer 1.
-    //map.putTile(2,tile_x,tile_y, layer1);
-
 
     //On parcourt le tableaux et on place les blocs à leurs place selon le numéro attribuer dans le tableau
     for (i=0;i<LARGEURJEUX;i++)
@@ -244,6 +240,14 @@ function createmap() {
         }
             
     }
+
+/********************************************************************************************************
+    //On trouve une position aléatoire 
+    var tile_x = game.rnd.between(1,LARGEURJEUX-1);
+    var tile_y = game.rnd.between(1,HAUTEURJEUX-1);    
+    //On met une tile (la tile 3 du set) à la case trouver(en x et y) sur la map, sur la layer 1.
+    //map.putTile(2,tile_x,tile_y, layer1);
+*********************************************************************************************************/
 }
 
 /*
@@ -255,13 +259,24 @@ function getPath()
     var goLeft = 0;
     var goFront = 0;
     var goPath;
+    
 
     if (tableauMap[curPos_x-1][curPos_y]==0)
+    {
         goLeft = 1;
+        gowhere = 'left';
+    }
     if (tableauMap[curPos_x+1][curPos_y]==0)
+    {
         goRight = 1;
+        gowhere = 'right';
+    }        
     if (tableauMap[curPos_x][curPos_y+1]==0)
-        goFront = 1;
+    {
+        goFront = 1; 
+        gowhere = 'front';
+    }
+        
 
     switch (goFront+goRight+goLeft)
     {
@@ -275,16 +290,34 @@ function getPath()
             if (goFront)
             {
                 if ( goPath==1 )
-                    curPos_y = curPos_y + 1;
+                {
+                    curPos_y = curPos_y + 1; //va devant
+                    gowhere = 'front';
+                }
+                    
                 else
-                    curPos_x = curPos_x + goRight - goLeft;
+                {
+                    curPos_x = curPos_x + goRight - goLeft; //va a gauche ou a droite
+                    if (goLeft)
+                        gowhere = 'left';
+                    else
+                        gowhere = 'right';
+                }
+                    
             }
             else
             {
                 if (goPath == 1)
-                    curPos_x = curPos_x + 1;
+                {
+                    curPos_x = curPos_x + 1; //va a droite
+                    gowhere = 'right';
+                }
+                    
                 else
-                    curPos_x = curPos_x - 1;
+                {
+                    curPos_x = curPos_x - 1; //va a gauche
+                    gowhere = 'left';
+                }                    
             }
 
         break;
@@ -293,16 +326,19 @@ function getPath()
             goPath = game.rnd.between(1,3);
             switch (goPath)
             {
-                case 1:
+                case 1: //va devant
                     curPos_y = curPos_y + 1;
+                    gowhere = 'front';
                 break;
 
-                case 2:
+                case 2: //va a droite
                     curPos_x = curPos_x + 1;
+                    gowhere = 'right';                    
                 break;
 
-                case 3:
+                case 3: //va a gauche
                     curPos_x = curPos_x - 1;
+                    gowhere = 'left';
                 break;
 
                 default:
@@ -313,5 +349,34 @@ function getPath()
         default:
             alert('Erreur!!');
     }
+    
 
+    if (gowhere == 'front')
+    {
+        if (tableauMap[curPos_x-1][curPos_y-1]==0)
+            tableauMap[curPos_x-1][curPos_y-1]=1;
+        if (tableauMap[curPos_x+1][curPos_y-1]==0)
+            tableauMap[curPos_x+1][curPos_y-1]=1;
+        if (tableauMap[curPos_x][curPos_y-2]==0)
+            tableauMap[curPos_x][curPos_y-2]=1;
+    }
+    if (gowhere == 'right')
+    {
+        if (tableauMap[curPos_x-2][curPos_y]==0)
+            tableauMap[curPos_x-2][curPos_y]=1;
+        if (tableauMap[curPos_x-1][curPos_y+1]==0)
+            tableauMap[curPos_x-1][curPos_y+1]=1;
+        if (tableauMap[curPos_x-1][curPos_y-1]==0)
+            tableauMap[curPos_x-1][curPos_y-1]=1;
+    }
+    if (gowhere == 'left')
+    {
+        if (tableauMap[curPos_x+2][curPos_y]==0)
+            tableauMap[curPos_x+2][curPos_y]=1;
+        if (tableauMap[curPos_x+1][curPos_y+1]==0)
+            tableauMap[curPos_x+1][curPos_y+1]=1;
+        if (tableauMap[curPos_x+1][curPos_y-1]==0)
+            tableauMap[curPos_x+1][curPos_y-1]=1;
+    }
+    
 }
