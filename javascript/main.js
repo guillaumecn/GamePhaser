@@ -40,6 +40,7 @@ game.physics.startSystem(Phaser.Physics.ARCADE);
 
 //**************************Map*************************//
 createmap();
+createPath();
 
 //******************************************************//
 
@@ -165,26 +166,32 @@ function createmap() {
     //On fait ensorte que les tiles 0 à 24 du tilesetimage soit "dur" (collision) dans la layer 1.
     map.setCollisionBetween(0, 3, true, layer1); 
 
-    //*******On fait le contour de la map avec une entrée et une sortie************
+    
 
+   
+
+/********************************************************************************************************
+    //On trouve une position aléatoire 
+    var tile_x = game.rnd.between(1,LARGEURJEUX-1);
+    var tile_y = game.rnd.between(1,HAUTEURJEUX-1);    
+    //On met une tile (la tile 3 du set) à la case trouver(en x et y) sur la map, sur la layer 1.
+    //map.putTile(2,tile_x,tile_y, layer1);
+*********************************************************************************************************/
+}
+
+function createPath()
+{
     //On trouve la position d'entrée et de sortie du maze
     entree_x = game.rnd.between(1,LARGEURJEUX-2);
-    //sortie_x = game.rnd.between(1,LARGEURJEUX-2);
-    //Entre la position d'entrée et de sortie dans le tableau
+    //Entre la position d'entrée e dans le tableau
     tableauMap[entree_x][0]=3;
-    //tableauMap[sortie_x][HAUTEURJEUX-1]=4;
 
-
-    //On met le mur du top et bas
+    //On met le mur du top
     for (i=0;i<LARGEURJEUX;i++)
     {
         //Top
         if (i != entree_x)
             tableauMap[i][0]=1;
-
-        //Bas
-        //if (i != sortie_x)
-          //  tableauMap[i][HAUTEURJEUX-1]=1;
     }
     //On met les mur de droite et de gauche
     for (i=0;i<HAUTEURJEUX;i++)
@@ -199,7 +206,7 @@ function createmap() {
 
     //**************************************************************************
 
-    //On fait un chemin, de l'entrée à la sortie. Àléatoire....
+    //On fait un chemin, de l'entrée au coté opposer de la map. Àléatoire....
     curPos_x=entree_x; //Position actuel en x
     curPos_y=0; //position actuel en y
 
@@ -237,17 +244,8 @@ function createmap() {
 
             if (tableauMap[i][j]==3)
                 map.putTile(4,i,j,layer1);
-        }
-            
+        }            
     }
-
-/********************************************************************************************************
-    //On trouve une position aléatoire 
-    var tile_x = game.rnd.between(1,LARGEURJEUX-1);
-    var tile_y = game.rnd.between(1,HAUTEURJEUX-1);    
-    //On met une tile (la tile 3 du set) à la case trouver(en x et y) sur la map, sur la layer 1.
-    //map.putTile(2,tile_x,tile_y, layer1);
-*********************************************************************************************************/
 }
 
 /*
