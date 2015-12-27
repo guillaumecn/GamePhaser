@@ -190,8 +190,8 @@ function createPath()
     }
 
 
-
-    //**************************************************************************
+    
+    //*******************************************************************************************************************************
 
     //On fait un chemin, de l'entrée au coté opposer de la map. Àléatoire....
     curPos_x=entree_x; //Position actuel en x
@@ -201,13 +201,14 @@ function createPath()
     curPos_y=2; // on se met dans le milieu de la grosse case a créé
     tableauMap[curPos_x][curPos_y]=3;
 
-
+    //i=0;
     while (curPos_y != HAUTEURJEUX-1)
     {
         getPath();
-        //curPos_y = HAUTEURJEUX-1;
-        //fixcorner();
-        //tableauMap[curPos_x][curPos_y]=3;
+
+        //if (i>10)
+           // curPos_y = HAUTEURJEUX-1;
+        //i++;
     }
 
     sortie_x = curPos_x;
@@ -219,6 +220,7 @@ function createPath()
         if (i != sortie_x)
             tableauMap[i][HAUTEURJEUX-1]=1;
     }
+    tableauMap[sortie_x][HAUTEURJEUX-1]=3;
 
 
     //On parcourt le tableaux et on place les blocs à leurs place selon le numéro attribuer dans le tableau
@@ -244,10 +246,10 @@ function getPath()
     var goRight = 0;
     var goLeft = 0;
     var goFront = 0;
-    var goPath;
+    var goPath = 0;
     var gowhere;
     var fromWhere;
-    var grosseCase;
+    var grosseCase1 =0;
     
 
     //On regarde on peut aller ou
@@ -273,15 +275,15 @@ function getPath()
     if ((tableauMap[curPos_x+1][curPos_y]==3) && (tableauMap[curPos_x+2][curPos_y]==3))
         fromWhere = 'left';
     if ((tableauMap[curPos_x][curPos_y-1]==3) && (tableauMap[curPos_x][curPos_y-2]==3))
-        fromWhere = 'back';        
+        fromWhere = 'back';       
 
     switch (goFront+goRight+goLeft)
     {
         case 1:
-            grosseCase = getGrosseCase(gowhere,fromWhere);
-            setGrosseCase(grosseCase);
-            curPos_x = curPos_x + 3*goRight- 3*goLeft;
-            curPos_y = curPos_y + 3*goFront;
+            grosseCase1 = getGrosseCase(gowhere,fromWhere);
+            setGrosseCase(grosseCase1);
+            curPos_x = curPos_x + 2*goRight- 2*goLeft;
+            curPos_y = curPos_y + 2*goFront;            
             
         break;
 
@@ -292,9 +294,9 @@ function getPath()
                 if ( goPath==1 )
                 {
                     gowhere = 'front';
-                    grosseCase = getGrosseCase(gowhere,fromWhere);
-                    setGrosseCase(grosseCase);
-                    curPos_y = curPos_y + 3; //va devant                    
+                    grosseCase1 = getGrosseCase(gowhere,fromWhere);
+                    setGrosseCase(grosseCase1);
+                    curPos_y = curPos_y + 2; //va devant                    
                 }
                     
                 else
@@ -302,18 +304,16 @@ function getPath()
                     if (goLeft)
                     {
                         gowhere = 'left';
-                        grosseCase = getGrosseCase(gowhere,fromWhere);
-                        setGrosseCase(grosseCase);
-                        //tableauMap[curPos_x+1][curPos_y+1]=3;
+                        grosseCase1 = getGrosseCase(gowhere,fromWhere);
+                        setGrosseCase(grosseCase1);
                     }                        
                     else
                     {
                         gowhere = 'right';
-                        grosseCase = getGrosseCase(gowhere,fromWhere);
-                        setGrosseCase(grosseCase);
-                        //tableauMap[curPos_x-1][curPos_y+1]=3;
+                        grosseCase1 = getGrosseCase(gowhere,fromWhere);
+                        setGrosseCase(grosseCase1);
                     }
-                    curPos_x = curPos_x + goRight - goLeft; //va a gauche ou a droite       
+                    curPos_x = curPos_x + 2*goRight - 2*goLeft; //va a gauche ou a droite       
                 }
                     
             }
@@ -322,19 +322,17 @@ function getPath()
                 if (goPath == 1)
                 {                    
                     gowhere = 'right';
-                    grosseCase = getGrosseCase(gowhere,fromWhere);
-                    setGrosseCase(grosseCase);
-                    curPos_x = curPos_x + 1; //va a droite
-                    //tableauMap[curPos_x-2][curPos_y]=3;
+                    grosseCase1 = getGrosseCase(gowhere,fromWhere);
+                    setGrosseCase(grosseCase1);
+                    curPos_x = curPos_x + 2; //va a droite
                 }
                     
                 else
                 {                    
                     gowhere = 'left';
-                    grosseCase = getGrosseCase(gowhere,fromWhere);
-                    setGrosseCase(grosseCase);
-                    curPos_x = curPos_x - 1; //va a gauche                    
-                    //tableauMap[curPos_x+2][curPos_y]=3;
+                    grosseCase1 = getGrosseCase(gowhere,fromWhere);
+                    setGrosseCase(grosseCase1);
+                    curPos_x = curPos_x - 2; //va a gauche
                 }                    
             }
 
@@ -346,23 +344,23 @@ function getPath()
             {
                 case 1: //va devant                    
                     gowhere = 'front';
-                    grosseCase = getGrosseCase(gowhere,fromWhere);
-                    setGrosseCase(grosseCase);
-                    curPos_y = curPos_y + 1;
+                    grosseCase1 = getGrosseCase(gowhere,fromWhere);
+                    setGrosseCase(grosseCase1);
+                    curPos_y = curPos_y + 2;
                 break;
 
                 case 2: //va a droite                    
                     gowhere = 'right';
-                    grosseCase = getGrosseCase(gowhere,fromWhere);
-                    setGrosseCase(grosseCase); 
-                    curPos_x = curPos_x + 1;                   
+                    grosseCase1 = getGrosseCase(gowhere,fromWhere);
+                    setGrosseCase(grosseCase1); 
+                    curPos_x = curPos_x + 2;                   
                 break;
 
                 case 3: //va a gauche                   
                     gowhere = 'left';
-                    grosseCase = getGrosseCase(gowhere,fromWhere);
-                    setGrosseCase(grosseCase);
-                     curPos_x = curPos_x - 1;
+                    grosseCase1 = getGrosseCase(gowhere,fromWhere);
+                    setGrosseCase(grosseCase1);
+                     curPos_x = curPos_x - 2;
                 break;
 
                 default:
@@ -373,38 +371,36 @@ function getPath()
         default:
             alert('Erreur!!');
     }
-    
-
 }
 
-function getGrosseCase(gowhere,fromWhere)
+function getGrosseCase(gowhere, fromWhere)
 {
     
-    var grosseCase;
+    var grosseCase = 0;
     if (fromWhere == 'back')
     {
        if (gowhere == 'front')
-            grosseCase = game.rnd(1,3,4,6);
+            grosseCase = game.rnd.pick([1,3,4,6]);
         if (gowhere == 'right')
-            grosseCase = game.rnd(1,2,4,7);
+            grosseCase = game.rnd.pick([1,2,4,7]);
         if (gowhere == 'left')
-            grosseCase = game.rnd(1,2,3,5);
+            grosseCase = game.rnd.pick([1,2,3,5]);
     }
     
     if (fromWhere == 'right')
     {
        if (gowhere == 'front')
-            grosseCase = game.rnd(1,3,10,11);
+            grosseCase = game.rnd.pick([1,3,10,11]);
         if (gowhere == 'right')
-            grosseCase = game.rnd(1,2,8,10);
+            grosseCase = game.rnd.pick([1,2,8,10]);
     }
 
     if (fromWhere == 'left')
     {
        if (gowhere == 'front')
-            grosseCase = game.rnd(1,4,9,10);
+            grosseCase = game.rnd.pick([1,4,9,10]);
         if (gowhere == 'left')
-            grosseCase = game.rnd(1,2,8,10);
+            grosseCase = game.rnd.pick([1,2,8,10]);
     }
     return grosseCase;
     
@@ -465,23 +461,6 @@ function setGrosseCase(grosseCase)
             tableauMap[curPos_x+1][curPos_y]=1;
         break;
         default:
-        alert("aaaaaaaa");
     }
     
 }
-
-
-
-/*
-function fixcorner()
-{
-    if (tableauMap[curPos_x+1][curPos_y+1]==0)
-        tableauMap[curPos_x+1][curPos_y+1]=1;
-    if (tableauMap[curPos_x+1][curPos_y-1]==0)
-        tableauMap[curPos_x+1][curPos_y-1]=1;
-    if (tableauMap[curPos_x-1][curPos_y+1]==0)
-        tableauMap[curPos_x-1][curPos_y+1]=1;
-    if (tableauMap[curPos_x-1][curPos_y-1]==0)
-        tableauMap[curPos_x-1][curPos_y-1]=1;        
-}
-*/
