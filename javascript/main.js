@@ -39,7 +39,7 @@ game.physics.startSystem(Phaser.Physics.ARCADE);
 //**************************Map********************************************************************************//
 createmap();
 createPath();
-
+createSubPath();
 
 //******************************************************//
 
@@ -239,7 +239,7 @@ function getPath()
     
 
     //On regarde on peut aller ou
-    if ((tableauMap[curPos_x-1][curPos_y] == 0) && (tableauMap[curPos_x-2][curPos_y] == 0))
+     if ((tableauMap[curPos_x-1][curPos_y] == 0) && (tableauMap[curPos_x-2][curPos_y] == 0))
     {
         goLeft = 1;
         gowhere = 'left';
@@ -359,6 +359,26 @@ function getPath()
     }
     //alert("On va ou?  " + gowhere);
 }
+
+/*
+function findGoWhere()
+{
+    var goWhere;
+    if ((tableauMap[curPos_x-1][curPos_y] == 0) && (tableauMap[curPos_x-2][curPos_y] == 0))
+    {
+        gowhere = 'left';
+    }
+    if ((tableauMap[curPos_x+1][curPos_y] == 0) && (tableauMap[curPos_x+2][curPos_y] == 0))
+    {
+        gowhere = 'right';
+    }        
+    if ((tableauMap[curPos_x][curPos_y+1] == 0) && (tableauMap[curPos_x][curPos_y+2] == 0))
+    {
+        gowhere = 'front';
+    }
+    return goWhere;
+}
+*/
 
 function getGrosseCase(gowhere, fromWhere)
 {
@@ -482,4 +502,35 @@ function faireMur(valeur_mur)
         }
         tableauMap[sortie_x][HAUTEURJEUX-1]=3;
     }
+}
+
+function createSubPath()
+{
+    
+    for (var j=1;j<HAUTEURJEUX-1;j++)
+    {
+        var i = 1;
+        while (tableauMap[i][j] != 0)
+        {
+            if ((tableauMap[i][j]==3) || (tableauMap[i][j+1]==3) || (tableauMap[i][j-1]==3))
+                createLeftBranch();
+            i++;
+        }
+        i=HAUTEURJEUX-1;
+        while (tableauMap[i][j] != 0)
+        {
+            if ((tableauMap[i][j]==3) || (tableauMap[i][j+1]==3) || (tableauMap[i][j-1]==3))
+                createRightBranch();
+            i--;
+        }
+    }   
+}
+function createLeftBranch()
+{
+    var fromWhere = 'left';
+
+}
+function createRightBranch()
+{
+
 }
