@@ -10,8 +10,8 @@ function preload() {
 }
 
 //Constantes*****
-var LARGEURJEUX = 32; //nombre de tiles de large du jeux
-var HAUTEURJEUX = 29; //nombre de tiles de haut du jeux
+var LARGEURJEUX = 32; //nombre de tiles de large du jeux 32
+var HAUTEURJEUX = 29; //nombre de tiles de haut du jeux 29 (doit être impair!!!)
 var VITESSEJOUEUR = 300; //vitesse de déplacement du joueur
 
 //var players;
@@ -40,6 +40,7 @@ game.physics.startSystem(Phaser.Physics.ARCADE);
 createmap();
 createPath();
 
+
 //******************************************************//
 
 //On crée le groupe d'objet inerte
@@ -52,12 +53,12 @@ players = game.add.group();
 
 //On crée le joueur 1
 player1 = players.create(entree_x*32,0,'dude1');
-//On fait suivre la camera sur le joueur
-game.camera.follow(player1);
 //On active et set la physique du joueur 1
 game.physics.arcade.enable(player1);
 player1.body.collideWorldBounds = true;
-
+//On fait suivre la camera sur le joueur
+game.camera.follow(player1);
+//Set the animations
 player1.animations.add('down', [0,1,2,1],10,true);
 player1.animations.add('up', [9,10,11,10],10,true);
 player1.animations.add('left', [3,4,5,4], 10, true);
@@ -124,6 +125,8 @@ function render() {
    //game.debug.text('Position en x  ' + tile_x, 50, 500);
    //game.debug.text('Position en y ' + tile_y, 50, 550);
    //game.debug.text('go where dit: ' + gowhere, 50, 500);
+   //game.debug.cameraInfo(game.camera, 32, 32);
+   //game.debug.spriteInfo(player1, 32, 132);
     
 
 }
@@ -135,7 +138,7 @@ function createmap() {
     game.stage.backgroundColor = '#2d2d2d';
 
     //  Creates a blank tilemap
-    map = game.add.tilemap();
+    map = game.add.tilemap();   
 
     //On cree le tableau 2D qui représente la map
     tableauMap = new Array();
@@ -154,15 +157,18 @@ function createmap() {
 
     //  Creates a new blank layer and sets the map dimensions.
     //  In this case the map is LARGEURJEUX x HAUTEURJEUX tiles in size and the tiles are 32x32 pixels in size.
-    layer1 = map.create('level 1',LARGEURJEUX , HAUTEURJEUX, 32, 32);
+    layer1 = map.create('level 1',LARGEURJEUX, HAUTEURJEUX, 32, 32);
     layer1.scrollFactorX = 0.5;
     layer1.scrollFactorY = 0.5;
     currentLayer = layer1;
-    
+    //layer1.fixedtocamera = true;    
+    //layer1.debug = true;
+
     //On set la grosseur du monde selon la layer1
-    layer1.resizeWorld();    
+    layer1.resizeWorld();   
     //On fait ensorte que les tiles 0 à 3 du tilesetimage soit "dur" (collision) dans la layer 1.
     map.setCollisionBetween(0, 3, true, layer1); 
+
 }
 
 function createPath()
@@ -173,21 +179,9 @@ function createPath()
     //Entre la position d'entrée e dans le tableau
     tableauMap[entree_x][0]=3;
 
-    //On met le mur du top
-    for (var i=0;i<LARGEURJEUX;i++)
-    {
-        //Top
-        if (i != entree_x)
-            tableauMap[i][0]=1;
-    }
-    //On met les mur de droite et de gauche
-    for (i=0;i<HAUTEURJEUX;i++)
-    {
-        //droite
-        tableauMap[0][i]=1;
-        //Gauche
-        tableauMap[LARGEURJEUX-1][i]=1;
-    }
+    //On fait le mur top,droite et gauche une première fois
+    faireMur(1);
+
 
 
     
@@ -200,35 +194,27 @@ function createPath()
     tableauMap[curPos_x][curPos_y]=3; //On commence le chemin
     curPos_y=2; // on se met dans le milieu de la grosse case a créé
     tableauMap[curPos_x][curPos_y]=3;
-
-    //i=0;
+    i=0;
+    //On fait le chemin du haut jusqu'au bas
     while (curPos_y != HAUTEURJEUX-1)
     {
         getPath();
-
-        //if (i>10)
+        //if (i>33)
            // curPos_y = HAUTEURJEUX-1;
-        //i++;
+        //i++
     }
-
+    //On definie la position de sortie
     sortie_x = curPos_x;
 
-    //On met le mur du bas
-    for (i=0;i<LARGEURJEUX;i++)
-    {
-        //Bas
-        if (i != sortie_x)
-            tableauMap[i][HAUTEURJEUX-1]=1;
-    }
-    tableauMap[sortie_x][HAUTEURJEUX-1]=3;
-
+    //On refait les murs
+    faireMur(5);
 
     //On parcourt le tableaux et on place les blocs à leurs place selon le numéro attribuer dans le tableau
     for (i=0;i<LARGEURJEUX;i++)
     {
         for (var j=0;j<HAUTEURJEUX;j++)
         {
-            if (tableauMap[i][j]==1)
+            if (tableauMap[i][j]==1 || tableauMap[i][j]==5)
                 map.putTile(2,i,j,layer1);
 
             if (tableauMap[i][j]==3)
@@ -364,13 +350,14 @@ function getPath()
                 break;
 
                 default:
-                    alert('Erreur!');
+                    alert('Erreur 1!');
             }
         break;
 
         default:
-            alert('Erreur!!');
+            alert('Erreur 2!!');
     }
+    //alert("On va ou?  " + gowhere);
 }
 
 function getGrosseCase(gowhere, fromWhere)
@@ -380,27 +367,27 @@ function getGrosseCase(gowhere, fromWhere)
     if (fromWhere == 'back')
     {
        if (gowhere == 'front')
-            grosseCase = game.rnd.pick([1,3,4,6]);
+            grosseCase = game.rnd.pick([1,3,4,6,6]);
         if (gowhere == 'right')
-            grosseCase = game.rnd.pick([1,2,4,7]);
+            grosseCase = game.rnd.pick([1,2,4,7,7]);
         if (gowhere == 'left')
-            grosseCase = game.rnd.pick([1,2,3,5]);
+            grosseCase = game.rnd.pick([1,2,3,5,5]);
     }
     
     if (fromWhere == 'right')
     {
        if (gowhere == 'front')
-            grosseCase = game.rnd.pick([1,3,10,11]);
+            grosseCase = game.rnd.pick([1,3,10,11,10,11]);
         if (gowhere == 'right')
-            grosseCase = game.rnd.pick([1,2,8,10]);
+            grosseCase = game.rnd.pick([1,2,8,10,8,10]);
     }
 
     if (fromWhere == 'left')
     {
        if (gowhere == 'front')
-            grosseCase = game.rnd.pick([1,4,9,10]);
+            grosseCase = game.rnd.pick([1,4,9,10,9,10]);
         if (gowhere == 'left')
-            grosseCase = game.rnd.pick([1,2,8,10]);
+            grosseCase = game.rnd.pick([1,2,8,10,8,10]);
     }
     return grosseCase;
     
@@ -463,4 +450,36 @@ function setGrosseCase(grosseCase)
         default:
     }
     
+}
+
+function faireMur(valeur_mur)
+{
+
+    //On met le mur du top
+    for (var i=0;i<LARGEURJEUX;i++)
+    {
+        //Top
+        if (i != entree_x)
+            tableauMap[i][0]=valeur_mur;
+    }
+    //On met les mur de droite et de gauche
+    for (i=0;i<HAUTEURJEUX;i++)
+    {
+        //droite
+        tableauMap[0][i]=valeur_mur;
+        //Gauche
+        tableauMap[LARGEURJEUX-1][i]=valeur_mur;
+    }
+
+    if (valeur_mur != 1)
+    {
+            //On met le mur du bas
+        for (i=0;i<LARGEURJEUX;i++)
+        {
+            //Bas
+            if (i != sortie_x)
+                tableauMap[i][HAUTEURJEUX-1]=valeur_mur;
+        }
+        tableauMap[sortie_x][HAUTEURJEUX-1]=3;
+    }
 }
