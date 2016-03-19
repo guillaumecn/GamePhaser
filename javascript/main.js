@@ -38,8 +38,8 @@ game.physics.startSystem(Phaser.Physics.ARCADE);
 
 //**************************Map********************************************************************************//
 createmap();
-createPath();
-createSubPath();
+//createPath();
+//createSubPath();
 
 //******************************************************//
 
